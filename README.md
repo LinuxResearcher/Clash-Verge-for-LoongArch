@@ -1,5 +1,5 @@
 # Clash Verge for Loong
 
-Builds of Clash-Verge-Rev for LoongArch.
+Build Clash-Verge-Rev for LoongArch.
 
-Clash-Verge-Rev的龙架构二进制文件。
+为龙架构编译Clash-Verge-Rev。
