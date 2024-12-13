@@ -1,0 +1,46 @@
+#!/usr/bin/bash
+
+echo "Delecting old clash-verge-rev files..."
+rm -rf clash-verge-rev
+echo "Privious clash-verge-rev files have been delected."
+
+echo "Fetching new clash-verge-rev source code..."
+git clone https://github.com/clash-verge-rev/clash-verge-rev.git
+echo "Download finished."
+
+echo "Change directory to clash-verge-rev"
+cd clash-verge-rev
+echo "Switching branch to "dev"..."
+git switch dev
+echo "Switch branch successfully."
+
+echo "Modifying source code..."
+sed -i '$d' package.json
+sed -i '$d' package.json
+sed -i '$a \  "packageManager": "pnpm@9.1.4",\
+  "pnpm": {\
+    "overrides": {\
+      "rollup": "npm:@rollup/wasm-node"\
+    }\
+  }\
+}' package.json
+sed -i s/mihomo-linux-loong64/mihomo-linux-loong64-abi2/g scripts/check.mjs
+sed -i s/'import proxyAgent from "https-proxy-agent"'/'import { HttpsProxyAgent } from "https-proxy-agent"'/g scripts/check.mjs
+sed -i s/'proxyAgent(httpProxy);'/'new HttpsProxyAgent(httpProxy);'/g scripts/check.mjs
+sed -i s/'"active": true,'/'"active": false,'/g src-tauri/tauri.conf.json
+echo "Source code was modified."
+
+echo "Installing npm modules..."
+pnpm install
+echo "Npm modules have been installed."
+echo "Checking..."
+pnpm run check
+echo "Check finished."
+echo "Replcing service files..."
+cp -v ../clash-verge-service/target/release/clash-verge-service src-tauri/resources/clash-verge-service-loongarch64-unknown-linux-gnu
+cp -v ../clash-verge-service/target/release/install-service src-tauri/resources/install-service-loongarch64-unknown-linux-gnu
+cp -v ../clash-verge-service/target/release/uninstall-service src-tauri/resources/uninstall-service-loongarch64-unknown-linux-gnu
+echo "Service files have been replaced."
+
+echo "Building..."
+cargo tauri build

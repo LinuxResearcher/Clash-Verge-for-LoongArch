@@ -1,0 +1,60 @@
+#!/usr/bin/bash
+
+rm -rf clash-verge
+
+VERSION_LINE=`cat clash-verge-rev/package.json | grep version`
+VERSION_LINE_L=${VERSION_LINE%\"*}
+VERSION=${VERSION_LINE_L##*\"}
+echo "Packaging version of Clash Verge is $VERSION"
+read -p "Please input the Debian Verison:" D_VERSION
+
+mkdir -p clash-verge/{DEBIAN,usr}
+mkdir -p clash-verge/usr/bin
+mkdir -p clash-verge/usr/lib/'Clash Verge'/resources
+mkdir -p clash-verge/usr/share/applications
+mkdir -p clash-verge/usr/share/icons/hicolor/{32x32,128x128,256x256@2}/apps
+
+cp -rv clash-verge-rev/src-tauri/target/release/{clash-verge,verge-mihomo,verge-mihomo-alpha,clash-verge-service,install-service,uninstall-service} clash-verge/usr/bin/
+cp -rv clash-verge-rev/src-tauri/target/release/resources/{Country.mmdb,geoip.dat,geosite.dat,clash-verge-service-loongarch64-unknown-linux-gnu,install-service-loongarch64-unknown-linux-gnu,uninstall-service-loongarch64-unknown-linux-gnu} clash-verge/usr/lib/'Clash Verge'/resources/
+
+cat > clash-verge/usr/share/applications/'Clash Verge.desktop' << EOL
+[Desktop Entry]
+Categories=Development;
+Comment=Clash Verge Rev
+Exec=clash-verge %u
+StartupWMClass=clash-verge
+Icon=clash-verge
+Name=Clash Verge
+Terminal=false
+Type=Application
+MimeType=x-scheme-handler/clash;
+EOL
+
+cp -v clash-verge-rev/src-tauri/icons/32x32.png clash-verge/usr/share/icons/hicolor/32x32/apps/clash-verge.png
+cp -v clash-verge-rev/src-tauri/icons/128x128.png clash-verge/usr/share/icons/hicolor/128x128/apps/clash-verge.png
+ffmpeg -i clash-verge-rev/src-tauri/icons/Square284x284Logo.png -vf scale=256:256 clash-verge/usr/share/icons/hicolor/256x256@2/apps/clash-verge.png
+
+SIZE_LINE=`du -s clash-verge/usr`
+SIZE=${SIZE_LINE::6}
+cat > clash-verge/DEBIAN/control << EOF
+Package: clash-verge
+Version: ${VERSION}-${D_VERSION}
+Architecture: loong64
+Installed-Size: ${SIZE}
+Maintainer: zzzgydi, wonfen, MystiPanda
+Priority: optional
+Depends: openssl, libayatana-appindicator3-1, libwebkit2gtk-4.1-0, libgtk-3-0
+Provides: clash-verge
+Conflicts: clash-verge
+Replaces: clash-verge
+Description: Clash Verge Rev
+ Clash Verge Rev
+EOF
+
+cp -rv clash-verge-rev/src-tauri/packages/linux/post-install.sh clash-verge/DEBIAN/postinst
+cp -rv clash-verge-rev/src-tauri/packages/linux/pre-remove.sh clash-verge/DEBIAN/prerm
+chmod -R a+x clash-verge/DEBIAN/{postinst,prerm}
+
+dpkg -b clash-verge clash-verge_${VERSION}-${D_VERSION}_loong64.deb
+sed -i s/loong64/loongarch64/g clash-verge/DEBIAN/control
+dpkg -b clash-verge clash-verge_${VERSION}-${D_VERSION}_loongarch64.deb
