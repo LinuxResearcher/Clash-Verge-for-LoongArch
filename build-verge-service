@@ -1,0 +1,16 @@
+#!/usr/bin/bash
+echo 'Removing old clash-verge-service files...'
+rm -rf clash-verge-service
+echo 'Previous clash-verge-service files have been removed.'
+
+echo 'Fetching new clash-verge-service source code...'
+git clone https://github.com/clash-verge-rev/clash-verge-service.git
+echo 'Download finished.'
+
+echo 'Modifying  source code...'
+sed -i s/'nix = "0.26"'/'nix = { version = "0.29", features = ["signal"] }'/g clash-verge-service/Cargo.toml
+echo 'Source code was modified.'
+
+cd clash-verge-service
+echo 'Building...'
+cargo build --release
