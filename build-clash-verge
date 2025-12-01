@@ -15,8 +15,8 @@ git switch main
 echo "Switch branch successfully."
 
 echo "Modifying source code..."
-sed -i s/mihomo-linux-loong64/mihomo-linux-loong64-abi2/g scripts/prebuild.mjs
-sed -i s/'"active": true,'/'"active": false,'/g src-tauri/tauri.conf.json
+sed -i 's#mihomo-linux-loong64#mihomo-linux-loong64-abi2#g' scripts/prebuild.mjs
+sed -i 's#"active": true,#"active": false,#g' src-tauri/tauri.conf.json
 sed -i 's#"@vitejs/plugin-react-swc": "^4.2.1",#"@vitejs/plugin-react": "^5.1.0",#g' package.json
 sed -i 's#import react from "@vitejs/plugin-react-swc";#import react from "@vitejs/plugin-react";#g' vite.config.mts
 echo "Source code was modified."
