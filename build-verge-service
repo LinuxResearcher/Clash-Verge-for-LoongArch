@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+echo 'Removing old clash-verge-service files...'
+rm -rf clash-verge-service-ipc
+echo 'Previous clash-verge-service files have been removed.'
+
+echo 'Fetching new clash-verge-service source code...'
+git clone https://github.com/clash-verge-rev/clash-verge-service-ipc.git
+echo 'Download finished.'
+
+cd clash-verge-service-ipc
+echo 'Building...'
+cargo build --release --features standalone
