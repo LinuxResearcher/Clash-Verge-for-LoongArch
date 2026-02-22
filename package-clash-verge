@@ -15,7 +15,7 @@ mkdir -p clash-verge/usr/share/applications
 mkdir -p clash-verge/usr/share/icons/hicolor/{32x32,128x128,256x256@2}/apps
 
 cp -rv clash-verge-rev/target/release/{clash-verge,verge-mihomo,verge-mihomo-alpha,clash-verge-service,clash-verge-service-install,clash-verge-service-uninstall} clash-verge/usr/bin/
-cp -rv clash-verge-rev/target/release/resources/{Country.mmdb,geoip.dat,geosite.dat,clash-verge-service-loongarch64-unknown-linux-gnu,clash-verge-service-install-loongarch64-unknown-linux-gnu,clash-verge-service-uninstall-loongarch64-unknown-linux-gnu} clash-verge/usr/lib/'Clash Verge'/resources/
+cp -rv clash-verge-rev/target/release/resources/{Country.mmdb,geoip.dat,geosite.dat} clash-verge/usr/lib/'Clash Verge'/resources/
 
 cat > clash-verge/usr/share/applications/'Clash Verge.desktop' << EOL
 [Desktop Entry]
